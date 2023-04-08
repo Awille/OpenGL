@@ -13,6 +13,17 @@ else()
     message(FATAL_ERROR "Unsupported compiler")
 endif()
 
+#我们以静态库的方式引入glew，需要指定GLEW_STATIC 具体信息如下
+#ifdef GLEW_STATIC
+#  define GLEWAPI extern
+#else
+#  ifdef GLEW_BUILD
+#    define GLEWAPI extern __declspec(dllexport)
+#  else
+#    define GLEWAPI extern __declspec(dllimport)
+#  endif
+#endif
+add_definitions(-DGLEW_STATIC)
 
 #include_directory：用于添加头文件包含目录，使编译器可以找到头文件。这个指令将指定的目录添加到编译器的头文件搜索路径中，
 #以便在编译时可以找到所需的头文件。通常情况下，include_directory
@@ -24,14 +35,14 @@ endif()
 
 # 添加头文件搜索路径
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/include/GLFW)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/include/GL)
 # 添加库文件搜索路径
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/lib-mingw-w64)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/lib/Release/x64)
 
-add_executable(OpenGL main.cpp ${GLAD_SRC})
 
-target_link_libraries(OpenGL libglfw3.a opengl32)
+add_executable(OpenGL main.cpp)
 
-file(GLOB GLAD_SRC
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLAD/include/glad/glad.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLAD/include/KHR/khrplatform.h)
+target_link_libraries(OpenGL libglfw3.a glew32s.lib opengl32)
+
 
