@@ -105,19 +105,22 @@ int main() {
     cout<<glGetString(GL_VERSION)<<endl;
 
 
+    //定义顶点数据
+    float positions[] = {
+            -0.5f, 0.5f,
+            -0.5f, -0.5f,
+            0.5f, 0.5f,
+            0.5f, -0.5f
+    };
+
     unsigned int buffer;
     //生成一个顶点缓冲区，buffer为其ID
     glGenBuffers(1, &buffer);
     //绑定对应ID的缓冲区，指明buffer类型
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    //定义三角形顶点数据
-    float positions[6] = {
-        -0.5f, -0.5f,
-        0.0f, 0.5f,
-        0.5f, -0.5f
-    };
+
     //定义缓冲区大小
-    glBufferData(GL_ARRAY_BUFFER,  6 * sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,  4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 
     //告诉openGL如何布局  目前这个例子中的一个vertex只包含一个属性，就是坐标
     //对一个vertex进行布局  首先开启属性，当前例子中只有坐标
@@ -125,6 +128,22 @@ int main() {
     //0 vertex中第一个属性的index， 2：该属性的维度， GL_FLOAT: 数据类型， false：是否归一化
     //stride步长  0：属性对象指针
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * sizeof(float ), 0);
+
+
+
+    //定义索引缓冲区
+    unsigned int indices[] = {
+            0, 1, 2,
+            1, 2, 3
+    };
+    unsigned int ido;
+    //生成一个索引缓冲区，ido为其id
+    glGenBuffers(1, &ido);
+    //绑定对应ID的缓冲区，指明buffer类型
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ido);
+
+    //定义缓冲区大小
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,  6  * sizeof(unsigned int ), indices, GL_STATIC_DRAW);
 
 
     ShaderProgramSource programSource = parseShader("../res/shaders/BasicShader.shader");
@@ -142,7 +161,8 @@ int main() {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
