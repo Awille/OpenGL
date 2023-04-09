@@ -7,6 +7,27 @@
 
 using namespace std;
 
+#define ASSERT(x) if (!(x)) __debugbreak();
+
+
+#define GLCall(x) { gLClearError();\
+     x;\
+     ASSERT(glLogCall(#x, __FILE__, __LINE__)) \
+     }
+
+
+static void gLClearError() {
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool glLogCall(const char* function, const char* file, int line) {
+    while (GLenum error = glGetError()) {
+        cout<<"OpenGL Error ("<<error<<")"<<function<< " "<<file <<" line:"<<line <<endl;
+        return false;
+    }
+    return true;
+}
+
 struct ShaderProgramSource {
     string vertexSource;
     string fragmentSource;
@@ -162,7 +183,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         //glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -171,15 +192,10 @@ int main() {
         glfwPollEvents();
     }
 
-    glfwTerminate();
+    glDeleteProgram(shader);
 
+    glfwTerminate();
 
     return 0;
 }
 
-//画一个简单的三角形 使用老的opengl接口
-//        glBegin(GL_TRIANGLES);
-//        glVertex2f(-0.5f, -0.5f);
-//        glVertex2f(0.0f, 0.5f);
-//        glVertex2f(0.5f, -0.5f);
-//        glEnd();
