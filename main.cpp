@@ -1,9 +1,40 @@
 #include <iostream>
 #include "glew.h"
 #include "glfw3.h"
+#include "fstream"
+#include "sstream"
+#include "string"
 
 using namespace std;
 
+struct ShaderProgramSource {
+    string vertexSource;
+    string fragmentSource;
+};
+
+static ShaderProgramSource parseShader(const string& filePath) {
+
+    enum class ShaderType {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+
+    ifstream stream(filePath);
+    string line;
+    stringstream ss[2];
+    ShaderType shaderType = ShaderType::NONE;
+    while (getline(stream, line)) {
+        if (line.find("#shader") != string::npos) {
+            if (line.find("vertex") != string::npos) {
+                shaderType = ShaderType::VERTEX;
+            } else if (line.find("fragment") != string::npos) {
+                shaderType = ShaderType::FRAGMENT;
+            }
+        } else {
+            ss[(int)shaderType]<<line<<'\n';
+        }
+    }
+    return {ss[0].str(), ss[1].str()};
+}
 
 
 static unsigned int compileShader(unsigned int type, const string& source) {
@@ -95,23 +126,14 @@ int main() {
     //stride步长  0：属性对象指针
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * sizeof(float ), 0);
 
-    string vertexShader =
-            "#version 330 core\n"
-            "layout(location = 0) in vec4 position;\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position=position;\n"
-            "}\n";
 
-    string fragmentShader =
-            "#version 330 core\n"
-            "layout(location = 0) out vec4 color;\n"
-            "void main()\n"
-            "{\n"
-            "    color = vec4(0.78, 0.2,  0.6, 1.0);"
-            "}\n";
+    ShaderProgramSource programSource = parseShader("../res/shaders/BasicShader.shader");
+    cout<< "Vertex Shader Source:" <<endl;
+    cout<<programSource.vertexSource<<endl;
+    cout<< "Fragment Shader Source:"<<endl;
+    cout<<programSource.fragmentSource<<endl;
 
-    unsigned int shader = CreateShader(vertexShader, fragmentShader);
+    unsigned int shader = CreateShader(programSource.vertexSource, programSource.fragmentSource);
     glUseProgram(shader);
 
     /* Loop until the user closes the window */
