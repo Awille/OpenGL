@@ -10,7 +10,8 @@ using namespace std;
 #define ASSERT(x) if (!(x)) __debugbreak();
 
 
-#define GLCall(x) do { gLClearError();\
+#define GLCall(x) do { \
+    gLClearError();\
      x;\
      ASSERT(glLogCall(#x, __FILE__, __LINE__)) \
      } while(0)
@@ -96,7 +97,10 @@ static unsigned int CreateShader(const string& vertexShader, const string& fragm
 
 
 
-int main() {
+
+
+
+int test_main() {
     cout << "Hello, World!" << endl;
 
     GLFWwindow* window;
@@ -186,9 +190,10 @@ int main() {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        int location = glGetUniformLocation(shader, "u_Color");
+        int location;
+        GLCall(location = glGetUniformLocation(shader, "u_Color"));
         ASSERT(location != -1);
-        glUniform4f(location, r, 0.3,  0.8, 1.0);
+        GLCall(glUniform4f(location, r, 0.3,  0.8, 1.0));
 
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));

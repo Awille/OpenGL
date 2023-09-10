@@ -36,12 +36,13 @@ add_definitions(-DGLEW_STATIC)
 # 添加头文件搜索路径
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/include/GLFW)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/include/GL)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/IMAGE)
 # 添加库文件搜索路径
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/lib-mingw-w64)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/lib/Release/x64)
 
 
-add_executable(OpenGL main.cpp)
+add_executable(OpenGL main.cpp HelloTriangle.cpp HelloShader.cpp Shader.h HelloTexture.cpp)
 
 target_link_libraries(OpenGL libglfw3.a glew32s.lib opengl32)
 
