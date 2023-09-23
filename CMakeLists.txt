@@ -37,6 +37,7 @@ add_definitions(-DGLEW_STATIC)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/include/GLFW)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/include/GL)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/IMAGE)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLM/glm)
 # 添加库文件搜索路径
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLFW/lib-mingw-w64)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/dependencies/GLEW/lib/Release/x64)

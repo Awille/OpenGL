@@ -7,6 +7,9 @@
 #include "string"
 #include "Shader.h"
 #include "cmath"
+#include "glm.hpp"
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -154,6 +157,9 @@ int main() {
     ourShader.setInt("ourTexture", 0);
     ourShader.setInt("texture2", 1);
 
+
+
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -176,8 +182,18 @@ int main() {
 
         ourShader.setFloat("mixValue", mixValue);
 
+        // create transformations
+        glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+
         // render the triangle
         ourShader.use();
+
+        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
